@@ -1,0 +1,180 @@
+openapi: 3.0.3
+info:
+  title: Football Match Organizer API - STD23111
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /competitions:
+    post:
+      summary: Initialize a new competition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Competition'
+      responses:
+        '201':
+          description: Competition registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Competition'
+    get:
+      summary: Obtain competition list
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A catalog of competitions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Competition'
+  /teams:
+    post:
+      summary: Create a new team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+      responses:
+        '201':
+          description: New Team registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+    get:
+      summary: Get team list
+      parameters:
+        - in: query
+          name: teamName
+          schema:
+            type: string
+          description: Sort teams by name
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of teams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+  /teams/{teamId}/players:
+    post:
+      summary: Assign new players to a team
+      parameters:
+        - in: path
+          name: teamId
+          required: true
+          schema:
+            type: string
+          description: Id of the team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Player'
+      responses:
+        '201':
+          description: Players registered to the team successfully
+    get:
+      summary: Get a list of players for a team
+      parameters:
+        - in: path
+          name: teamId
+          required: true
+          schema:
+            type: string
+          description: ID of the team
+        - in: query
+          name: playerName
+          schema:
+            type: string
+          description: Sort players by name
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of players of the specified team
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+components:
+  schemas:
+    Competition:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        region:
+          type: string
+    Team:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slogan:
+          type: string
+        competitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Competition'
+    Player:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        number:
+          type: integer
+        dominantFoot:
+          type: string
+          enum:
+            - Left
+            - Right
